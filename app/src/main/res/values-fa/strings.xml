@@ -90,7 +90,7 @@
     <string name="preset_custom_prefix">سفارشی: </string>
     <string name="custom_name_prompt">نام استایل سفارشی:</string>
     <string name="copied">دستور کپی شد ✓</string>
-    <string name="copy_failed">کپی نشد — مرورگر اجازه نداد.</string>
+    <string name="copy_failed">کپی نشد — دوباره امتحان کنید.</string>
     <string name="err_total">وزن خمیر (یا وزن آرد) باید بزرگ‌تر از صفر باشد.</string>
     <string name="err_pref_water">آب پیش‌تخمیر از کل آب بیشتر می‌شود. درصد آرد یا هایدریشن پیش‌تخمیر را کمتر کنید.</string>
     <string name="err_numbers">لطفاً همه مقادیر را به‌صورت عدد معتبر وارد کنید.</string>

@@ -90,7 +90,7 @@
     <string name="preset_custom_prefix">Custom: </string>
     <string name="custom_name_prompt">Name for your custom style:</string>
     <string name="copied">Recipe copied ✓</string>
-    <string name="copy_failed">Copy failed — browser blocked it.</string>
+    <string name="copy_failed">Copy failed — please try again.</string>
     <string name="err_total">Dough weight (or flour weight) must be greater than zero.</string>
     <string name="err_pref_water">Preferment water exceeds total water. Lower the preferment flour %% or its hydration.</string>
     <string name="err_numbers">Please enter valid numbers in all fields.</string>

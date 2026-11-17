@@ -62,19 +62,30 @@ private val DarkScheme = darkColorScheme(
 data class GlassColors(
     val top: Color,
     val bottom: Color,
-    val border: Color
+    val border: Color,
+    /** Specular top-edge highlight (iOS Liquid Glass cue). */
+    val highlight: Color,
+    /** Selected segment pill fill (iOS segmented control). */
+    val segmentSelected: Color,
+    val segmentSelectedContent: Color
 )
 
 private val LightGlass = GlassColors(
-    top = Color.White.copy(alpha = 0.55f),
-    bottom = Color.White.copy(alpha = 0.22f),
-    border = Color.White.copy(alpha = 0.65f)
+    top = Color.White.copy(alpha = 0.50f),
+    bottom = Color.White.copy(alpha = 0.16f),
+    border = Color.White.copy(alpha = 0.60f),
+    highlight = Color.White.copy(alpha = 0.80f),
+    segmentSelected = Color.White.copy(alpha = 0.95f),
+    segmentSelectedContent = Color(0xFF232A22)
 )
 
 private val DarkGlass = GlassColors(
-    top = Color.White.copy(alpha = 0.10f),
-    bottom = Color.White.copy(alpha = 0.04f),
-    border = Color.White.copy(alpha = 0.18f)
+    top = Color.White.copy(alpha = 0.13f),
+    bottom = Color.White.copy(alpha = 0.07f),
+    border = Color.White.copy(alpha = 0.22f),
+    highlight = Color.White.copy(alpha = 0.30f),
+    segmentSelected = Color.White.copy(alpha = 0.20f),
+    segmentSelectedContent = Color(0xFFF1ECDD)
 )
 
 val LocalGlassColors = compositionLocalOf { LightGlass }

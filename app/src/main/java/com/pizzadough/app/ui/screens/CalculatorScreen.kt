@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -42,6 +43,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -73,8 +76,10 @@ import com.pizzadough.app.ui.components.HintText
 import com.pizzadough.app.ui.components.SectionTitle
 import com.pizzadough.app.ui.theme.Basil
 import com.pizzadough.app.ui.theme.BasilDark
+import com.pizzadough.app.ui.theme.Gold
 import com.pizzadough.app.ui.theme.LocalGlassColors
 import com.pizzadough.app.ui.theme.TabularStyle
+import com.pizzadough.app.ui.theme.Tomato
 
 @Composable
 fun CalculatorScreen(vm: MainViewModel) {
@@ -82,12 +87,13 @@ fun CalculatorScreen(vm: MainViewModel) {
     val direction = if (state.lang == "fa") LayoutDirection.Rtl else LayoutDirection.Ltr
 
     CompositionLocalProvider(LocalLayoutDirection provides direction) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .verticalScroll(rememberScrollState())
-        ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            GlassBackdrop()
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+            ) {
             AppHeader(state, vm)
             Column(
                 modifier = Modifier.padding(horizontal = 16.dp),
@@ -111,7 +117,67 @@ fun CalculatorScreen(vm: MainViewModel) {
                 )
             }
         }
+        }
     }
+}
+
+/**
+ * Ambient backdrop for the glass cards: a soft vertical wash plus three
+ * radial color glows (basil / tomato / gold). Static — it sits outside the
+ * scroll container, so it is drawn once and never redrawn while scrolling.
+ * Radial gradients (not blur) so it looks identical back to API 26.
+ */
+@Composable
+private fun GlassBackdrop() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    listOf(
+                        MaterialTheme.colorScheme.background,
+                        MaterialTheme.colorScheme.surfaceVariant
+                    )
+                )
+            )
+    ) {
+        Blob(
+            Modifier
+                .align(Alignment.TopEnd)
+                .offset(x = 90.dp, y = (-70).dp)
+                .size(360.dp),
+            Basil
+        )
+        Blob(
+            Modifier
+                .align(Alignment.CenterStart)
+                .offset(x = (-120).dp)
+                .size(320.dp),
+            Tomato
+        )
+        Blob(
+            Modifier
+                .align(Alignment.BottomEnd)
+                .offset(x = 110.dp, y = 120.dp)
+                .size(340.dp),
+            Gold
+        )
+    }
+}
+
+@Composable
+private fun Blob(modifier: Modifier, color: Color) {
+    Box(
+        modifier = modifier.drawBehind {
+            drawRect(
+                Brush.radialGradient(
+                    listOf(color.copy(alpha = 0.14f), Color.Transparent),
+                    center = center,
+                    radius = size.minDimension * 0.5f
+                )
+            )
+        }
+    )
 }
 
 // ---------------------------------------------------------------- header
@@ -122,7 +188,13 @@ private fun AppHeader(state: UiState, vm: MainViewModel) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Brush.horizontalGradient(listOf(BasilDark, Basil)))
+                .background(
+                    Brush.linearGradient(
+                        listOf(BasilDark, Basil),
+                        start = Offset.Zero,
+                        end = Offset.Infinite
+                    )
+                )
                 .padding(horizontal = 16.dp, vertical = 18.dp)
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
@@ -131,7 +203,7 @@ private fun AppHeader(state: UiState, vm: MainViewModel) {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    GlassPill("v1 🤖 Android", accent = true)
+                    GlassPill("v1.1 🤖 Android", accent = true)
                     Row {
                         IconButton(onClick = {
                             vm.setLang(if (state.lang == "fa") "en" else "fa")
@@ -164,7 +236,7 @@ private fun AppHeader(state: UiState, vm: MainViewModel) {
                 Spacer(Modifier.height(8.dp))
                 Text(
                     stringResource(R.string.app_title),
-                    color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold
+                    color = Color.White, fontSize = 26.sp, fontWeight = FontWeight.Bold
                 )
                 Text(
                     stringResource(R.string.app_subtitle),
@@ -353,7 +425,7 @@ private fun ModeCard(state: UiState, vm: MainViewModel) {
                 style = TabularStyle,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
-                fontSize = 15.sp
+                fontSize = 16.sp
             )
         }
     }
@@ -502,6 +574,11 @@ private fun ResultsCard(state: UiState, vm: MainViewModel) {
     val clipboard = LocalClipboardManager.current
     var copyMsg by remember { mutableStateOf<String?>(null) }
     var showResetConfirm by remember { mutableStateOf(false) }
+    val r = state.result
+    val prefLabel = if (state.input?.prefermentType == PrefermentType.POOLISH) "Poolish" else "Biga"
+    val copyText = r?.let { buildCopyText(it, prefLabel, state.lang) }
+    val copiedMsg = stringResource(R.string.copied)
+    val failedMsg = stringResource(R.string.copy_failed)
 
     GlassCard(modifier = Modifier.fillMaxWidth()) {
         SectionTitle(stringResource(R.string.results_title))
@@ -517,55 +594,52 @@ private fun ResultsCard(state: UiState, vm: MainViewModel) {
                 }
             )
             ErrorBox(msg)
-            return@GlassCard
         }
 
-        val r = state.result ?: return@GlassCard
-        val ingNames = ingNameMap()
-
-        Text(
-            stringResource(R.string.tbl_total),
-            fontWeight = FontWeight.Bold, fontSize = 15.sp,
-            color = MaterialTheme.colorScheme.secondary
-        )
-        Spacer(Modifier.height(4.dp))
-        AmountsTable(r.total, r.percentages, ingNames, pctSign(state.lang))
-
-        r.preferment?.let { p ->
-            Spacer(Modifier.height(12.dp))
-            val label = if (state.input?.prefermentType == PrefermentType.POOLISH) "Poolish" else "Biga"
+        r?.let { res ->
+            val ingNames = ingNameMap()
             Text(
-                "${stringResource(R.string.tbl_preferment)} ($label)",
+                stringResource(R.string.tbl_total),
                 fontWeight = FontWeight.Bold, fontSize = 15.sp,
                 color = MaterialTheme.colorScheme.secondary
             )
             Spacer(Modifier.height(4.dp))
-            AmountsTable(p, null, ingNames, pctSign(state.lang))
-            Spacer(Modifier.height(12.dp))
-            Text(
-                stringResource(R.string.tbl_final),
-                fontWeight = FontWeight.Bold, fontSize = 15.sp,
-                color = MaterialTheme.colorScheme.secondary
-            )
-            Spacer(Modifier.height(4.dp))
-            AmountsTable(r.finalDough!!, null, ingNames, pctSign(state.lang))
+            AmountsTable(res.total, res.percentages, ingNames, pctSign(state.lang))
+
+            res.preferment?.let { p ->
+                Spacer(Modifier.height(12.dp))
+                Text(
+                    "${stringResource(R.string.tbl_preferment)} ($prefLabel)",
+                    fontWeight = FontWeight.Bold, fontSize = 15.sp,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+                Spacer(Modifier.height(4.dp))
+                AmountsTable(p, null, ingNames, pctSign(state.lang))
+                Spacer(Modifier.height(12.dp))
+                Text(
+                    stringResource(R.string.tbl_final),
+                    fontWeight = FontWeight.Bold, fontSize = 15.sp,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+                Spacer(Modifier.height(4.dp))
+                AmountsTable(res.finalDough!!, null, ingNames, pctSign(state.lang))
+            }
         }
 
         Spacer(Modifier.height(12.dp))
-        val prefLabel = if (state.input?.prefermentType == PrefermentType.POOLISH) "Poolish" else "Biga"
-        val copyText = buildCopyText(r, prefLabel, state.lang)
-        val copiedMsg = stringResource(R.string.copied)
-        val failedMsg = stringResource(R.string.copy_failed)
+        // Reset stays available even on error: it is the way out of a bad value.
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            GlassButton(
-                stringResource(R.string.copy_recipe),
-                onClick = {
-                    runCatching { clipboard.setText(AnnotatedString(copyText)) }
-                        .onSuccess { copyMsg = copiedMsg }
-                        .onFailure { copyMsg = failedMsg }
-                },
-                modifier = Modifier.weight(1f)
-            )
+            if (copyText != null) {
+                GlassButton(
+                    stringResource(R.string.copy_recipe),
+                    onClick = {
+                        runCatching { clipboard.setText(AnnotatedString(copyText)) }
+                            .onSuccess { copyMsg = copiedMsg }
+                            .onFailure { copyMsg = failedMsg }
+                    },
+                    modifier = Modifier.weight(1f)
+                )
+            }
             GlassButton(
                 stringResource(R.string.reset),
                 onClick = { showResetConfirm = true },
@@ -590,6 +664,7 @@ private fun ResultsCard(state: UiState, vm: MainViewModel) {
             text = { Text(stringResource(R.string.reset_confirm)) },
             confirmButton = {
                 TextButton(onClick = {
+                    copyMsg = null
                     vm.reset()
                     showResetConfirm = false
                 }) { Text(stringResource(R.string.reset)) }

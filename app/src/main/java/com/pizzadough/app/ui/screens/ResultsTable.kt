@@ -21,6 +21,7 @@ import com.pizzadough.app.domain.CalcResult
 import com.pizzadough.app.domain.fmtExact
 import com.pizzadough.app.domain.fmtRound
 import com.pizzadough.app.domain.fmtRoundSmart
+import com.pizzadough.app.domain.trim2
 import com.pizzadough.app.ui.theme.TabularStyle
 
 /**
@@ -180,7 +181,7 @@ fun buildCopyText(
     )
     if (result.lossPct > 0) {
         lines.add(
-            "${stringResource(R.string.dough_loss)} ${trim2s(result.lossPct)}$pctSuffix → " +
+            "${stringResource(R.string.dough_loss)} ${trim2(result.lossPct)}$pctSuffix → " +
                     "${stringResource(R.string.recipe_gross)} ${fmtRound(result.grossWeight)} g"
         )
     }
@@ -194,6 +195,3 @@ fun buildCopyText(
     }
     return lines.joinToString("\n")
 }
-
-private fun trim2s(n: Double): String =
-    ("%.2f".format(java.util.Locale.US, n)).trimEnd('0').trimEnd('.').ifEmpty { "0" }
