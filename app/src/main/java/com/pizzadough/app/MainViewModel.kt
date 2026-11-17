@@ -205,30 +205,10 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
 
     // ------------------------------------------------------------------ actions
 
-    /**
-     * Persian/Arabic-Indic digits (۰-۹, ٠-٩) and the Arabic decimal separator (٫)
-     * become Latin digits so input from a Persian keyboard parses. Thousands
-     * separator (٬) is dropped. Programmatic Latin values are unaffected.
-     */
-    private fun normalizeDigits(s: String): String {
-        val sb = StringBuilder(s.length)
-        for (ch in s) {
-            when (ch) {
-                in '۰'..'۹' -> sb.append('0' + (ch - '۰'))
-                in '٠'..'٩' -> sb.append('0' + (ch - '٠'))
-                '٫' -> sb.append('.')
-                '٬' -> Unit
-                else -> sb.append(ch)
-            }
-        }
-        return sb.toString()
-    }
-
     fun updateField(name: String, value: String) {
-        val v = normalizeDigits(value)
-        _fields.update { it + (name to v) }
+        _fields.update { it + (name to value) }
         if (name == "yeast") syncIdy()
-        viewModelScope.launch { prefs.saveField(name, v) }
+        viewModelScope.launch { prefs.saveField(name, value) }
     }
 
     fun setLang(lang: String) {

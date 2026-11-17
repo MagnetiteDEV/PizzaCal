@@ -193,7 +193,11 @@ fun GlassNumberField(
     val scope = rememberCoroutineScope()
     OutlinedTextField(
         value = value,
-        onValueChange = onValueChange,
+        onValueChange = { raw ->
+            // Latin digits only: Persian/Arabic digits and any other characters
+            // are never accepted into the field (user preference: English numerals).
+            if (raw.all { it in '0'..'9' || it == '.' }) onValueChange(raw)
+        },
         label = { Text(label, fontSize = 13.sp) },
         modifier = modifier
             .bringIntoViewRequester(bringIntoViewRequester)
