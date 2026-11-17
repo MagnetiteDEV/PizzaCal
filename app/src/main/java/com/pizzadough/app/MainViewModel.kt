@@ -18,6 +18,7 @@ import com.pizzadough.app.domain.calculate
 import com.pizzadough.app.domain.panWeight
 import com.pizzadough.app.domain.suggestYeastIDY
 import com.pizzadough.app.domain.trim2
+import com.pizzadough.app.domain.trim3
 import com.pizzadough.app.domain.waterTempC
 import com.pizzadough.app.domain.yeastFactor
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -80,6 +81,15 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     /** Mirrors the web app's module-scope prevYeastType (bug-fix d). */
     private var prevYeastType: YeastType = YeastType.IDY
 
+    /** Canonical IDY % (web v5.3): yeast-type conversions always start here,
+     * so switching types back and forth cannot accumulate rounding drift. */
+    private var canonicalIdy: Double? = null
+
+    private fun syncIdy() {
+        val v = _fields.value["yeast"]?.toDoubleOrNull()
+        canonicalIdy = v?.div(yeastFactor(prevYeastType))
+    }
+
     val uiState: StateFlow<UiState> = combine(
         _fields, _lang, _mode, _presetKey, _theme, _toolsOpen, _customPresets
     ) { fields: Map<String, String>, lang: String, mode: CalcMode, presetKey: String,
@@ -105,6 +115,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             _toolsOpen.value = prefs.toolsOpenFlow.first()
             _customPresets.value = prefs.customPresetsFlow.first()
             prevYeastType = parseYeastType(_fields.value["yeastType"] ?: "idy")
+            syncIdy()
         }
     }
 
@@ -194,6 +205,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
 
     fun updateField(name: String, value: String) {
         _fields.update { it + (name to value) }
+        if (name == "yeast") syncIdy()
         viewModelScope.launch { prefs.saveField(name, value) }
     }
 
@@ -225,12 +237,12 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch { prefs.saveToolsOpen(open) }
     }
 
-    /** User changed the yeast type: auto-convert % preserving leavening power. */
+    /** User changed the yeast type: convert from the canonical IDY % (web v5.3),
+     * preserving leavening power without accumulated rounding drift. */
     fun onYeastTypeChange(type: YeastType) {
-        val cur = _fields.value["yeast"]?.toDoubleOrNull()
-        if (cur != null) {
-            val converted = cur / yeastFactor(prevYeastType) * yeastFactor(type)
-            updateField("yeast", trim2(converted))
+        val idy = canonicalIdy
+        if (idy != null) {
+            updateField("yeast", trim3(idy * yeastFactor(type)))
         }
         prevYeastType = type
         updateField(
@@ -240,6 +252,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 YeastType.FRESH -> "fresh"
             }
         )
+        syncIdy()
     }
 
     /** Selecting Poolish/Biga auto-sets traditional defaults (hydration 100/50, yeast share 100). */
@@ -280,6 +293,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             }
         )
         prevYeastType = preset.yeastType
+        syncIdy()
         _presetKey.value = key
         viewModelScope.launch { prefs.savePreset(key) }
     }
@@ -325,6 +339,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         val sugg = uiState.value.suggestedYeast ?: return
         val type = parseYeastType(_fields.value["yeastType"] ?: "idy")
         updateField("yeast", trim2(sugg * yeastFactor(type)))
+        syncIdy()
     }
 
     /** One-tap: use the pan weight as the total dough weight. */
@@ -334,14 +349,15 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         updateField("totalWeight", w.roundToInt().toString())
     }
 
+    /** Reset values to defaults, keeping language, theme and custom presets (web v5.3).
+     * The UI asks for confirmation before calling this. */
     fun reset() {
         _fields.value = FieldDefaults.map
-        _lang.value = "fa"
         _mode.value = CalcMode.TOTAL
         _presetKey.value = "neapolitan"
-        _theme.value = "system"
         _toolsOpen.value = false
         prevYeastType = YeastType.IDY
-        viewModelScope.launch { prefs.resetAll() }
+        syncIdy()
+        viewModelScope.launch { prefs.resetValues() }
     }
 }

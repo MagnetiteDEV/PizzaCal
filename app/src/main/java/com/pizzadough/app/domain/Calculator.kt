@@ -184,3 +184,10 @@ fun fmtRoundSmart(n: Double): String =
 /** Like JS toFixed(2) with trailing zeros trimmed (used for yeast conversion). */
 fun trim2(n: Double): String =
     String.format(Locale.US, "%.2f", n).trimEnd('0').trimEnd('.').ifEmpty { "0" }
+
+/** Like JS toFixed(3) with trailing zeros trimmed (web v5.3 yeast conversion). */
+fun trim3(n: Double): String =
+    String.format(Locale.US, "%.3f", n).trimEnd('0').trimEnd('.').ifEmpty { "0" }
+
+/** Percent sign follows the UI language (web v5.3 pctSign). */
+fun pctSign(lang: String): String = if (lang == "fa") "٪" else "%"

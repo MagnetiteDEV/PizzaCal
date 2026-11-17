@@ -6,6 +6,7 @@
     <string name="style_title">استایل پیتزا</string>
     <string name="save_custom">ذخیره سفارشی</string>
     <string name="delete">حذف</string>
+    <string name="cancel">لغو</string>
     <string name="preset_hint">انتخاب استایل، مقادیر پیش‌فرض را پر می‌کند. می‌توانید بعدش دستی تغییر دهید.</string>
     <string name="mode_title">روش محاسبه</string>
     <string name="mode_total">وزن نهایی خمیر</string>
@@ -50,6 +51,7 @@
     <string name="flour_temp">دمای آرد (°C)</string>
     <string name="water_temp_result">دمای آب لازم:</string>
     <string name="water_hint">فرمول: دمای آب = ۵۵ − (دمای محیط + دمای آرد). دمای محیط از فیلد تخمیر بالا گرفته می‌شود. هدف، دمای نهایی خمیر حدود ۲۳ تا ۲۵ درجه است.</string>
+    <string name="water_too_cold">بسیار سرد/غیرعملی؛ آرد یا محیط را خنک‌تر کنید</string>
     <string name="pan_title">وزن خمیر بر اساس ابعاد قالب</string>
     <string name="pan_shape">شکل قالب</string>
     <string name="pan_rect">مستطیلی / سینی</string>
@@ -64,6 +66,7 @@
     <string name="results_title">نتیجه — مقدار مواد</string>
     <string name="copy_recipe">کپی دستور</string>
     <string name="reset">بازنشانی</string>
+    <string name="reset_confirm">مقادیر واردشده به حالت پیش‌فرض برمی‌گردد (استایل‌های سفارشی، زبان و تم حفظ می‌شوند). ادامه می‌دهید؟</string>
     <string name="footer_note">مقادیر گرد‌شده برای ترازوی آشپزخانه است؛ مواد کم‌مقدار (مثل مخمر) با دقت ۰٫۱ گرم گرد می‌شوند تا خطای گرد کردن بزرگ نشود.</string>
     <string name="ing_flour">آرد</string>
     <string name="ing_water">آب</string>

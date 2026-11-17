@@ -60,6 +60,7 @@ import com.pizzadough.app.domain.CalcMode
 import com.pizzadough.app.domain.PrefermentType
 import com.pizzadough.app.domain.YeastType
 import com.pizzadough.app.domain.fmtRound
+import com.pizzadough.app.domain.pctSign
 import com.pizzadough.app.domain.trim2
 import com.pizzadough.app.ui.components.ErrorBox
 import com.pizzadough.app.ui.components.GlassButton
@@ -259,7 +260,7 @@ private fun PresetCard(state: UiState, vm: MainViewModel) {
                 }) { Text(stringResource(R.string.save_custom)) }
             },
             dismissButton = {
-                TextButton(onClick = { showSave = false }) { Text(stringResource(R.string.delete)) }
+                TextButton(onClick = { showSave = false }) { Text(stringResource(R.string.cancel)) }
             }
         )
     }
@@ -395,13 +396,14 @@ private fun FormulaCard(state: UiState, vm: MainViewModel) {
         }
         Spacer(Modifier.height(8.dp))
 
+        val pct = pctSign(state.lang)
         val fields = listOf(
-            Triple("hydration", R.string.hydration, "%"),
-            Triple("salt", R.string.salt, "%"),
-            Triple("oil", R.string.oil, "%"),
-            Triple("sugar", R.string.sugar, "%"),
-            Triple("yeast", R.string.yeast, "%"),
-            Triple("doughLoss", R.string.dough_loss, "%")
+            Triple("hydration", R.string.hydration, pct),
+            Triple("salt", R.string.salt, pct),
+            Triple("oil", R.string.oil, pct),
+            Triple("sugar", R.string.sugar, pct),
+            Triple("yeast", R.string.yeast, pct),
+            Triple("doughLoss", R.string.dough_loss, pct)
         )
         fields.chunked(2).forEach { row ->
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -446,6 +448,7 @@ private fun FormulaCard(state: UiState, vm: MainViewModel) {
 @Composable
 private fun PrefermentCard(state: UiState, vm: MainViewModel) {
     val v = state.values
+    val pct = pctSign(state.lang)
     val type = when (v["prefermentType"]) {
         "poolish" -> PrefermentType.POOLISH
         "biga" -> PrefermentType.BIGA
@@ -474,17 +477,17 @@ private fun PrefermentCard(state: UiState, vm: MainViewModel) {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 GlassNumberField(
                     stringResource(R.string.pref_flour_pct), v["prefFlourPct"] ?: "",
-                    { vm.updateField("prefFlourPct", it) }, Modifier.weight(1f), suffix = "%"
+                    { vm.updateField("prefFlourPct", it) }, Modifier.weight(1f), suffix = pct
                 )
                 GlassNumberField(
                     stringResource(R.string.pref_hydration), v["prefHydration"] ?: "",
-                    { vm.updateField("prefHydration", it) }, Modifier.weight(1f), suffix = "%"
+                    { vm.updateField("prefHydration", it) }, Modifier.weight(1f), suffix = pct
                 )
             }
             Spacer(Modifier.height(8.dp))
             GlassNumberField(
                 stringResource(R.string.pref_yeast_share), v["prefYeastShare"] ?: "",
-                { vm.updateField("prefYeastShare", it) }, Modifier.fillMaxWidth(), suffix = "%"
+                { vm.updateField("prefYeastShare", it) }, Modifier.fillMaxWidth(), suffix = pct
             )
             HintText(stringResource(R.string.pref_hint))
         }
@@ -497,6 +500,7 @@ private fun PrefermentCard(state: UiState, vm: MainViewModel) {
 private fun ResultsCard(state: UiState, vm: MainViewModel) {
     val clipboard = LocalClipboardManager.current
     var copyMsg by remember { mutableStateOf<String?>(null) }
+    var showResetConfirm by remember { mutableStateOf(false) }
 
     GlassCard(modifier = Modifier.fillMaxWidth()) {
         SectionTitle(stringResource(R.string.results_title))
@@ -524,7 +528,7 @@ private fun ResultsCard(state: UiState, vm: MainViewModel) {
             color = MaterialTheme.colorScheme.secondary
         )
         Spacer(Modifier.height(4.dp))
-        AmountsTable(r.total, r.percentages, ingNames)
+        AmountsTable(r.total, r.percentages, ingNames, pctSign(state.lang))
 
         r.preferment?.let { p ->
             Spacer(Modifier.height(12.dp))
@@ -535,7 +539,7 @@ private fun ResultsCard(state: UiState, vm: MainViewModel) {
                 color = MaterialTheme.colorScheme.secondary
             )
             Spacer(Modifier.height(4.dp))
-            AmountsTable(p, null, ingNames)
+            AmountsTable(p, null, ingNames, pctSign(state.lang))
             Spacer(Modifier.height(12.dp))
             Text(
                 stringResource(R.string.tbl_final),
@@ -543,7 +547,7 @@ private fun ResultsCard(state: UiState, vm: MainViewModel) {
                 color = MaterialTheme.colorScheme.secondary
             )
             Spacer(Modifier.height(4.dp))
-            AmountsTable(r.finalDough!!, null, ingNames)
+            AmountsTable(r.finalDough!!, null, ingNames, pctSign(state.lang))
         }
 
         Spacer(Modifier.height(12.dp))
@@ -563,7 +567,7 @@ private fun ResultsCard(state: UiState, vm: MainViewModel) {
             )
             GlassButton(
                 stringResource(R.string.reset),
-                onClick = { vm.reset() },
+                onClick = { showResetConfirm = true },
                 primary = false,
                 modifier = Modifier.weight(1f)
             )
@@ -576,5 +580,22 @@ private fun ResultsCard(state: UiState, vm: MainViewModel) {
                 fontWeight = FontWeight.Bold
             )
         }
+    }
+
+    if (showResetConfirm) {
+        AlertDialog(
+            onDismissRequest = { showResetConfirm = false },
+            title = { Text(stringResource(R.string.reset)) },
+            text = { Text(stringResource(R.string.reset_confirm)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    vm.reset()
+                    showResetConfirm = false
+                }) { Text(stringResource(R.string.reset)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showResetConfirm = false }) { Text(stringResource(R.string.cancel)) }
+            }
+        )
     }
 }

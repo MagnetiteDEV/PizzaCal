@@ -34,6 +34,7 @@ import com.pizzadough.app.R
 import com.pizzadough.app.domain.PanShape
 import com.pizzadough.app.domain.YeastType
 import com.pizzadough.app.domain.fmtRound
+import com.pizzadough.app.domain.pctSign
 import com.pizzadough.app.domain.trim2
 import com.pizzadough.app.domain.yeastFactor
 import com.pizzadough.app.ui.components.GlassButton
@@ -141,7 +142,7 @@ private fun FermentationSection(state: com.pizzadough.app.UiState, vm: MainViewM
         val converted = sugg * yeastFactor(type)
         Row(verticalAlignment = Alignment.CenterVertically) {
             GlassPill(
-                "${stringResource(R.string.suggested_yeast)}: ${trim2(converted)}%",
+                "${stringResource(R.string.suggested_yeast)}: ${trim2(converted)}${pctSign(state.lang)}",
                 accent = true
             )
             Spacer(Modifier.width(8.dp))
@@ -163,7 +164,8 @@ private fun WaterTempSection(state: com.pizzadough.app.UiState, vm: MainViewMode
     Spacer(Modifier.height(8.dp))
     state.waterTemp?.let { t ->
         Text(
-            "${stringResource(R.string.water_temp_result)}: ${trim2(t)}°C",
+            "${stringResource(R.string.water_temp_result)}: ${trim2(t)}°C" +
+                if (t < 1.0) " ⚠ ${stringResource(R.string.water_too_cold)}" else "",
             style = TabularStyle,
             fontWeight = FontWeight.Bold,
             fontSize = 15.sp,

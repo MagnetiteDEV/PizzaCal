@@ -31,7 +31,8 @@ import com.pizzadough.app.ui.theme.TabularStyle
 fun AmountsTable(
     amounts: Amounts,
     percentages: Map<String, Double>?,
-    ingNames: Map<String, String>
+    ingNames: Map<String, String>,
+    pctSuffix: String
 ) {
     val rows = listOf(
         Triple("flour", amounts.flour, percentages?.get("flour")),
@@ -47,7 +48,7 @@ fun AmountsTable(
         rows.forEach { (key, value, pct) ->
             TableRow(
                 name = ingNames[key] ?: key,
-                pct = pct?.let { "${fmtExact(it)}%" },
+                pct = pct?.let { "${fmtExact(it)}$pctSuffix" },
                 exact = "${fmtExact(value)} g",
                 rounded = "${fmtRoundSmart(value)} g"
             )

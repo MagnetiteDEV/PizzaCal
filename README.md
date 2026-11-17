@@ -1,17 +1,17 @@
 # Pizza Dough Calculator — Android (v1 🤖)
 
-Native Android port of the Pizza Dough Calculator PWA (web v5.2), built with **Kotlin + Jetpack Compose**, 100% offline.
+Native Android port of the Pizza Dough Calculator PWA (web v5.3), built with **Kotlin + Jetpack Compose**, 100% offline.
 
-## Features (exact parity with web v5.2)
+## Features (exact parity with web v5.3)
 
 - **Baker's-percentage engine**: three modes — total dough weight, dough balls (count × weight), flour weight
 - **Dough loss %** (default 2%): gross = target × (1 + loss/100)
-- **Yeast auto-conversion**: IDY ×1, ADY ×1.25, Fresh ×3 — changing type preserves leavening power
+- **Yeast auto-conversion**: IDY ×1, ADY ×1.25, Fresh ×3 — changing type preserves leavening power, converting from a canonical IDY value so repeated switches don't accumulate rounding drift
 - **Poolish / Biga preferments**: auto traditional defaults (100/50 hydration, 100% yeast share), deducted from totals with three result tables (Total / Preferment / Final)
 - **Smart rounding**: <10 g → 0.1 g (so 1.2 g yeast doesn't become 1 g), else whole grams
 - **5 style presets** (Neapolitan, New York, Detroit, Roman/Teglia, Thin) + user custom presets
-- **Pro Tools slide panel** (closed by default, remembers state): fermentation yeast suggestion (equivalent-hours-at-20°C model), Regola del 55 water temperature, pan-size calculator with one-tap apply
-- **Copy recipe** (all three sections) + reset
+- **Pro Tools slide panel** (closed by default, remembers state): fermentation yeast suggestion (equivalent-hours-at-20°C model), Regola del 55 water temperature (with a too-cold warning below 1 °C), pan-size calculator with one-tap apply
+- **Copy recipe** (all three sections) + reset with confirmation (keeps language, theme and custom presets)
 - **Liquid Glass UI**: frosted-glass cards/buttons/menus, fast simple animations (≤200 ms)
 - **Italian trattoria theme** + dark mode (system default, toggle cycles system → light → dark)
 - **Bilingual FA/EN** with RTL/LTR switching, Vazirmatn font (subsetted, ~53 KB per weight)
@@ -39,8 +39,8 @@ app/src/main/
 │           ├── ProToolsPanel.kt     # slide panel (fermentation / water temp / pan)
 │           └── ResultsTable.kt      # result tables + clipboard text builder
 └── res/
-    ├── values/strings.xml        # English (99 strings)
-    ├── values-fa/strings.xml     # Persian (99 strings)
+    ├── values/strings.xml        # English (103 strings)
+    ├── values-fa/strings.xml     # Persian (103 strings)
     ├── font/vazirmatn_{regular,medium,bold}.ttf  # subsetted Latin+Persian
     └── mipmap-anydpi-v26/        # adaptive launcher icon
 ```
@@ -65,7 +65,7 @@ every push to `main` (uploaded as an Actions artifact) and attaches it to a
 GitHub Release on version tags (`v*`). Fonts are binary, so they are not
 committed — CI downloads Vazirmatn TTFs from the official release. To use it:
 
-1. Create an empty public repo (e.g. `pizza-dough-android`) and push this folder.
+1. Create an empty public repo (e.g. `PizzaCal`) and push this folder.
 2. Push a tag: `git tag v1.0 && git push origin v1.0`
 3. Download `pizza-dough-v1.apk` from the Releases page and install it
    (allow "install unknown apps" when prompted).
@@ -92,4 +92,5 @@ committed — CI downloads Vazirmatn TTFs from the official release. To use it:
 
 ## Changelog
 
+- **v5.3 parity** (2026-11-17): canonical-IDY yeast conversion, language-aware % sign, water-temperature warning, reset confirmation preserving settings — calculation engine and defaults unchanged
 - **v1** (2026-10-30): initial Android port from web v5.2 — all features above, Liquid Glass UI, badge «v1 🤖 Android»

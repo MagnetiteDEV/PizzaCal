@@ -6,6 +6,7 @@
     <string name="style_title">Pizza Style</string>
     <string name="save_custom">Save Custom</string>
     <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
     <string name="preset_hint">Choosing a style fills in its defaults. You can tweak any value afterwards.</string>
     <string name="mode_title">Calculation Mode</string>
     <string name="mode_total">Total Dough Weight</string>
@@ -50,6 +51,7 @@
     <string name="flour_temp">Flour temp (°C)</string>
     <string name="water_temp_result">Water should be:</string>
     <string name="water_hint">Formula: Water temp = 55 − (room temp + flour temp). Room temp is taken from the fermentation field above. Target final dough temp is about 23–25°C.</string>
+    <string name="water_too_cold">too cold / impractical; cool the flour or room</string>
     <string name="pan_title">Dough Weight by Pan Size</string>
     <string name="pan_shape">Pan shape</string>
     <string name="pan_rect">Rectangular / tray</string>
@@ -64,6 +66,7 @@
     <string name="results_title">Result — Ingredient Amounts</string>
     <string name="copy_recipe">Copy Recipe</string>
     <string name="reset">Reset</string>
+    <string name="reset_confirm">Entered values will return to defaults (custom styles, language and theme are kept). Continue?</string>
     <string name="footer_note">Rounded values suit a kitchen scale; small amounts (like yeast) are rounded to 0.1 g so the rounding error stays small.</string>
     <string name="ing_flour">Flour</string>
     <string name="ing_water">Water</string>

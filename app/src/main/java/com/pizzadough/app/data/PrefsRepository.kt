@@ -96,4 +96,15 @@ class PrefsRepository(private val context: Context) {
     suspend fun resetAll() {
         context.dataStore.edit { it.clear() }
     }
+
+    /** Web v5.3 reset: restore default field values, mode, preset and panel state
+     * in one transaction, keeping language, theme and custom presets. */
+    suspend fun resetValues() {
+        context.dataStore.edit { prefs ->
+            FieldDefaults.map.forEach { (k, v) -> prefs[fieldKey(k)] = v }
+            prefs[MODE] = "total"
+            prefs[PRESET] = "neapolitan"
+            prefs[TOOLS_OPEN] = false
+        }
+    }
 }
