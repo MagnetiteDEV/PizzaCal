@@ -17,6 +17,18 @@ android {
         versionName = "1.1"
     }
 
+    // Fixed debug keystore (committed debug.keystore) so every CI build
+    // shares one signature and installs as an update over previous builds.
+    // The debug key is public by design, not a secret.
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
