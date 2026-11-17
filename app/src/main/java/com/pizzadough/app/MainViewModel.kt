@@ -90,17 +90,20 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         canonicalIdy = v?.div(yeastFactor(prevYeastType))
     }
 
+    // Array form: the 7-flow combine overload does not resolve under Kotlin 2.0.20
+    // (CI runs 1-2 kept selecting the vararg overload); explicit casts keep it stable.
+    @Suppress("UNCHECKED_CAST")
     val uiState: StateFlow<UiState> = combine(
         _fields, _lang, _mode, _presetKey, _theme, _toolsOpen, _customPresets
-    ) { fields, lang, mode, presetKey, theme, toolsOpen, customPresets ->
+    ) { args ->
         buildUiState(
-            fields = fields,
-            lang = lang,
-            mode = mode,
-            presetKey = presetKey,
-            theme = theme,
-            toolsOpen = toolsOpen,
-            customPresets = customPresets
+            fields = args[0] as Map<String, String>,
+            lang = args[1] as String,
+            mode = args[2] as CalcMode,
+            presetKey = args[3] as String,
+            theme = args[4] as String,
+            toolsOpen = args[5] as Boolean,
+            customPresets = args[6] as Map<String, Preset>
         )
     }.stateIn(viewModelScope, SharingStarted.Eagerly, UiState())
 

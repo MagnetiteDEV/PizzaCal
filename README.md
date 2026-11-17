@@ -92,6 +92,6 @@ committed — CI downloads Vazirmatn TTFs from the official release. To use it:
 
 ## Changelog
 
-- **CI fix** (2026-11-17): first GitHub Actions build failed with 6 Kotlin compile errors — fixed: `combine` lambda explicit types removed (overload resolution), `SolidColor` wrappers for mixed Color/Brush backgrounds in GlassPill/PresetChip, destructured `filter` in AmountsTable, `Typography` font family applied per style (no `defaultFontFamily` in Material3)
+- **CI fix** (2026-11-17): the first two GitHub Actions builds failed at `:app:compileDebugKotlin` — fixed: 2× `SolidColor` wrappers for mixed Color/Brush backgrounds, destructured `filter` in AmountsTable, `Typography` font family applied per style (no `defaultFontFamily` in Material3), and the 7-flow `combine` rewritten in the vararg array form (the 7-arg overload does not resolve under Kotlin 2.0.20)
 - **v5.3 parity** (2026-11-17): canonical-IDY yeast conversion, language-aware % sign, water-temperature warning, reset confirmation preserving settings — calculation engine and defaults unchanged
 - **v1** (2026-10-30): initial Android port from web v5.2 — all features above, Liquid Glass UI, badge «v1 🤖 Android»
