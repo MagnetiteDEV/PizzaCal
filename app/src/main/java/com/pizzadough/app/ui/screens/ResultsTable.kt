@@ -41,7 +41,7 @@ fun AmountsTable(
         Triple("oil", amounts.oil, percentages?.get("oil")),
         Triple("sugar", amounts.sugar, percentages?.get("sugar")),
         Triple("yeast", amounts.yeast, percentages?.get("yeast"))
-    ).filter { (_, v, _) -> v > 0 || it.first == "flour" || it.first == "water" }
+    ).filter { (key, v, _) -> v > 0 || key == "flour" || key == "water" }
 
     Column {
         TableHeaderRow()

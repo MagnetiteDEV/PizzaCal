@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -225,7 +226,7 @@ fun GlassPill(text: String, modifier: Modifier = Modifier, accent: Boolean = fal
         modifier = modifier
             .clip(shape)
             .background(
-                if (accent) MaterialTheme.colorScheme.tertiary.copy(alpha = 0.25f)
+                if (accent) SolidColor(MaterialTheme.colorScheme.tertiary.copy(alpha = 0.25f))
                 else Brush.verticalGradient(listOf(glass.top, glass.bottom))
             )
             .border(1.dp, glass.border, shape)

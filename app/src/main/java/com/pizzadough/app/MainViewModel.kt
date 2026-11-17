@@ -92,8 +92,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
 
     val uiState: StateFlow<UiState> = combine(
         _fields, _lang, _mode, _presetKey, _theme, _toolsOpen, _customPresets
-    ) { fields: Map<String, String>, lang: String, mode: CalcMode, presetKey: String,
-        theme: String, toolsOpen: Boolean, customPresets: Map<String, Preset> ->
+    ) { fields, lang, mode, presetKey, theme, toolsOpen, customPresets ->
         buildUiState(
             fields = fields,
             lang = lang,

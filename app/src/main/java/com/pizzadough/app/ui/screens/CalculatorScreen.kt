@@ -44,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
@@ -278,7 +279,7 @@ private fun PresetChip(
         modifier = Modifier
             .clip(RoundedCornerShape(50))
             .background(
-                if (selected) MaterialTheme.colorScheme.primary
+                if (selected) SolidColor(MaterialTheme.colorScheme.primary)
                 else Brush.verticalGradient(listOf(glass.top, glass.bottom))
             )
             .border(1.dp, glass.border, RoundedCornerShape(50))

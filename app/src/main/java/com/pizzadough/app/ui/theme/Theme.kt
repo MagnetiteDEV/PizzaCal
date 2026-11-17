@@ -85,6 +85,27 @@ val Vazirmatn = FontFamily(
     Font(R.font.vazirmatn_bold, FontWeight.Bold)
 )
 
+/** Vazirmatn on every Material3 text style (Typography has no defaultFontFamily). */
+private val AppTypography: Typography = Typography().let { base ->
+    base.copy(
+        displayLarge = base.displayLarge.copy(fontFamily = Vazirmatn),
+        displayMedium = base.displayMedium.copy(fontFamily = Vazirmatn),
+        displaySmall = base.displaySmall.copy(fontFamily = Vazirmatn),
+        headlineLarge = base.headlineLarge.copy(fontFamily = Vazirmatn),
+        headlineMedium = base.headlineMedium.copy(fontFamily = Vazirmatn),
+        headlineSmall = base.headlineSmall.copy(fontFamily = Vazirmatn),
+        titleLarge = base.titleLarge.copy(fontFamily = Vazirmatn),
+        titleMedium = base.titleMedium.copy(fontFamily = Vazirmatn),
+        titleSmall = base.titleSmall.copy(fontFamily = Vazirmatn),
+        bodyLarge = base.bodyLarge.copy(fontFamily = Vazirmatn),
+        bodyMedium = base.bodyMedium.copy(fontFamily = Vazirmatn),
+        bodySmall = base.bodySmall.copy(fontFamily = Vazirmatn),
+        labelLarge = base.labelLarge.copy(fontFamily = Vazirmatn),
+        labelMedium = base.labelMedium.copy(fontFamily = Vazirmatn),
+        labelSmall = base.labelSmall.copy(fontFamily = Vazirmatn)
+    )
+}
+
 /** Tabular numerals for result tables (mirrors the web app's font-variant-numeric). */
 val TabularStyle = TextStyle(fontFeatureSettings = "tnum")
 
@@ -98,7 +119,7 @@ fun PizzaDoughTheme(
     CompositionLocalProvider(LocalGlassColors provides glass) {
         androidx.compose.material3.MaterialTheme(
             colorScheme = scheme,
-            typography = Typography(defaultFontFamily = Vazirmatn),
+            typography = AppTypography,
             content = content
         )
     }
