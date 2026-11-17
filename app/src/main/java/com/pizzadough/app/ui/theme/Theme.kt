@@ -44,7 +44,7 @@ private val DarkScheme = darkColorScheme(
     secondary = Color(0xFF9CC7A6),
     onSecondary = Color(0xFF0F1F14),
     tertiary = Color(0xFFD9A441),
-    background = Color(0xFF141711),
+    background = Color(0xFF000000),
     onBackground = Color(0xFFF1ECDD),
     surface = Color(0xFF1F241E),
     onSurface = Color(0xFFF1ECDD),
@@ -62,30 +62,19 @@ private val DarkScheme = darkColorScheme(
 data class GlassColors(
     val top: Color,
     val bottom: Color,
-    val border: Color,
-    /** Specular top-edge highlight (iOS Liquid Glass cue). */
-    val highlight: Color,
-    /** Selected segment pill fill (iOS segmented control). */
-    val segmentSelected: Color,
-    val segmentSelectedContent: Color
+    val border: Color
 )
 
 private val LightGlass = GlassColors(
-    top = Color.White.copy(alpha = 0.50f),
-    bottom = Color.White.copy(alpha = 0.16f),
-    border = Color.White.copy(alpha = 0.60f),
-    highlight = Color.White.copy(alpha = 0.80f),
-    segmentSelected = Color.White.copy(alpha = 0.95f),
-    segmentSelectedContent = Color(0xFF232A22)
+    top = Color.White.copy(alpha = 0.55f),
+    bottom = Color.White.copy(alpha = 0.22f),
+    border = Color.White.copy(alpha = 0.65f)
 )
 
 private val DarkGlass = GlassColors(
-    top = Color.White.copy(alpha = 0.13f),
-    bottom = Color.White.copy(alpha = 0.07f),
-    border = Color.White.copy(alpha = 0.22f),
-    highlight = Color.White.copy(alpha = 0.30f),
-    segmentSelected = Color.White.copy(alpha = 0.20f),
-    segmentSelectedContent = Color(0xFFF1ECDD)
+    top = Color.White.copy(alpha = 0.10f),
+    bottom = Color.White.copy(alpha = 0.04f),
+    border = Color.White.copy(alpha = 0.18f)
 )
 
 val LocalGlassColors = compositionLocalOf { LightGlass }

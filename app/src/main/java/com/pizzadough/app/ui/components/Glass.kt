@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
@@ -32,7 +30,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -51,8 +48,7 @@ import kotlinx.coroutines.launch
 fun <T> quickTween() = tween<T>(180, easing = FastOutSlowInEasing)
 
 /**
- * Frosted-glass card: static translucent gradient + hairline light border,
- * a specular top edge and a soft shadow (iOS Liquid Glass cue).
+ * Frosted-glass card: static translucent gradient + hairline light border.
  * No live blur — cheap on GPU and RAM (see performance notes).
  */
 @Composable
@@ -61,32 +57,15 @@ fun GlassCard(
     content: @Composable ColumnScope.() -> Unit
 ) {
     val glass = LocalGlassColors.current
-    val shape = RoundedCornerShape(22.dp)
-    Box(
+    val shape = RoundedCornerShape(16.dp)
+    Column(
         modifier = modifier
-            .shadow(6.dp, shape)
             .clip(shape)
             .background(Brush.verticalGradient(listOf(glass.top, glass.bottom)))
             .border(1.dp, glass.border, shape)
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            content = content
-        )
-        // Specular top edge: a soft light catch along the top border.
-        Box(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .fillMaxWidth()
-                .padding(horizontal = 28.dp)
-                .height(1.dp)
-                .background(
-                    Brush.horizontalGradient(
-                        listOf(Color.Transparent, glass.highlight, Color.Transparent)
-                    )
-                )
-        )
-    }
+            .padding(16.dp),
+        content = content
+    )
 }
 
 @Composable
@@ -102,10 +81,7 @@ fun GlassButton(
         onClick = onClick,
         modifier = modifier,
         enabled = enabled,
-        shape = RoundedCornerShape(16.dp),
-        elevation = ButtonDefaults.buttonElevation(
-            defaultElevation = 2.dp, pressedElevation = 5.dp, disabledElevation = 0.dp
-        ),
+        shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = if (primary)
                 MaterialTheme.colorScheme.primary.copy(alpha = 0.92f)
@@ -126,8 +102,7 @@ fun GlassButton(
     }
 }
 
-/** Glass segmented control (calculation mode, pan shape, yeast type).
- * iOS style: the selected option is a raised light pill with a soft shadow. */
+/** Glass segmented control (calculation mode, pan shape, yeast type). */
 @Composable
 fun <T> GlassSegmentedControl(
     options: List<Pair<T, String>>,
@@ -136,8 +111,7 @@ fun <T> GlassSegmentedControl(
     modifier: Modifier = Modifier
 ) {
     val glass = LocalGlassColors.current
-    val shape = RoundedCornerShape(16.dp)
-    val pillShape = RoundedCornerShape(11.dp)
+    val shape = RoundedCornerShape(14.dp)
     Row(
         modifier = modifier
             .clip(shape)
@@ -150,16 +124,15 @@ fun <T> GlassSegmentedControl(
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .then(if (isSel) Modifier.shadow(3.dp, pillShape) else Modifier)
-                    .clip(pillShape)
+                    .clip(RoundedCornerShape(10.dp))
                     .background(
-                        if (isSel) glass.segmentSelected
+                        if (isSel) MaterialTheme.colorScheme.primary
                         else Color.Transparent
                     )
                     .border(
                         1.dp,
-                        if (isSel) glass.highlight else Color.Transparent,
-                        pillShape
+                        if (isSel) Color.White.copy(alpha = 0.25f) else Color.Transparent,
+                        RoundedCornerShape(10.dp)
                     )
                     .clickable { onSelect(value) }
                     .padding(vertical = 10.dp, horizontal = 4.dp),
@@ -167,8 +140,8 @@ fun <T> GlassSegmentedControl(
             ) {
                 Text(
                     label,
-                    color = if (isSel) glass.segmentSelectedContent
-                    else MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = if (isSel) MaterialTheme.colorScheme.onPrimary
+                    else MaterialTheme.colorScheme.onSurface,
                     fontWeight = if (isSel) FontWeight.Bold else FontWeight.Normal,
                     fontSize = 13.sp,
                     textAlign = TextAlign.Center,
@@ -213,7 +186,7 @@ fun GlassNumberField(
             },
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(12.dp),
         colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = glass.top,
             unfocusedContainerColor = glass.bottom,
@@ -252,7 +225,7 @@ fun HintText(text: String) {
 
 @Composable
 fun ErrorBox(message: String) {
-    val shape = RoundedCornerShape(16.dp)
+    val shape = RoundedCornerShape(12.dp)
     Box(
         modifier = Modifier
             .clip(shape)
@@ -276,7 +249,6 @@ fun GlassPill(text: String, modifier: Modifier = Modifier, accent: Boolean = fal
     val shape = RoundedCornerShape(50)
     Box(
         modifier = modifier
-            .shadow(2.dp, shape)
             .clip(shape)
             .background(
                 if (accent) SolidColor(MaterialTheme.colorScheme.tertiary.copy(alpha = 0.25f))

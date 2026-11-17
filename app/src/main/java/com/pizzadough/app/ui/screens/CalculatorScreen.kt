@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -43,8 +42,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -76,10 +73,8 @@ import com.pizzadough.app.ui.components.HintText
 import com.pizzadough.app.ui.components.SectionTitle
 import com.pizzadough.app.ui.theme.Basil
 import com.pizzadough.app.ui.theme.BasilDark
-import com.pizzadough.app.ui.theme.Gold
 import com.pizzadough.app.ui.theme.LocalGlassColors
 import com.pizzadough.app.ui.theme.TabularStyle
-import com.pizzadough.app.ui.theme.Tomato
 
 @Composable
 fun CalculatorScreen(vm: MainViewModel) {
@@ -87,13 +82,12 @@ fun CalculatorScreen(vm: MainViewModel) {
     val direction = if (state.lang == "fa") LayoutDirection.Rtl else LayoutDirection.Ltr
 
     CompositionLocalProvider(LocalLayoutDirection provides direction) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            GlassBackdrop()
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-            ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .verticalScroll(rememberScrollState())
+        ) {
             AppHeader(state, vm)
             Column(
                 modifier = Modifier.padding(horizontal = 16.dp),
@@ -117,67 +111,7 @@ fun CalculatorScreen(vm: MainViewModel) {
                 )
             }
         }
-        }
     }
-}
-
-/**
- * Ambient backdrop for the glass cards: a soft vertical wash plus three
- * radial color glows (basil / tomato / gold). Static — it sits outside the
- * scroll container, so it is drawn once and never redrawn while scrolling.
- * Radial gradients (not blur) so it looks identical back to API 26.
- */
-@Composable
-private fun GlassBackdrop() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    listOf(
-                        MaterialTheme.colorScheme.background,
-                        MaterialTheme.colorScheme.surfaceVariant
-                    )
-                )
-            )
-    ) {
-        Blob(
-            Modifier
-                .align(Alignment.TopEnd)
-                .offset(x = 90.dp, y = (-70).dp)
-                .size(360.dp),
-            Basil
-        )
-        Blob(
-            Modifier
-                .align(Alignment.CenterStart)
-                .offset(x = (-120).dp)
-                .size(320.dp),
-            Tomato
-        )
-        Blob(
-            Modifier
-                .align(Alignment.BottomEnd)
-                .offset(x = 110.dp, y = 120.dp)
-                .size(340.dp),
-            Gold
-        )
-    }
-}
-
-@Composable
-private fun Blob(modifier: Modifier, color: Color) {
-    Box(
-        modifier = modifier.drawBehind {
-            drawRect(
-                Brush.radialGradient(
-                    listOf(color.copy(alpha = 0.14f), Color.Transparent),
-                    center = center,
-                    radius = size.minDimension * 0.5f
-                )
-            )
-        }
-    )
 }
 
 // ---------------------------------------------------------------- header
@@ -188,13 +122,7 @@ private fun AppHeader(state: UiState, vm: MainViewModel) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(
-                    Brush.linearGradient(
-                        listOf(BasilDark, Basil),
-                        start = Offset.Zero,
-                        end = Offset.Infinite
-                    )
-                )
+                .background(Brush.horizontalGradient(listOf(BasilDark, Basil)))
                 .padding(horizontal = 16.dp, vertical = 18.dp)
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
@@ -236,7 +164,7 @@ private fun AppHeader(state: UiState, vm: MainViewModel) {
                 Spacer(Modifier.height(8.dp))
                 Text(
                     stringResource(R.string.app_title),
-                    color = Color.White, fontSize = 26.sp, fontWeight = FontWeight.Bold
+                    color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold
                 )
                 Text(
                     stringResource(R.string.app_subtitle),
@@ -425,7 +353,7 @@ private fun ModeCard(state: UiState, vm: MainViewModel) {
                 style = TabularStyle,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
-                fontSize = 16.sp
+                fontSize = 15.sp
             )
         }
     }

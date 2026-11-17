@@ -41,7 +41,7 @@ private fun AppRoot(vm: MainViewModel) {
     SideEffect {
         // Status bar matches the web app: basil header in light, dark bg in dark mode.
         (context as? Activity)?.window?.statusBarColor =
-            (if (darkTheme) Color(0xFF141711) else BasilDark).toArgb()
+            (if (darkTheme) Color.Black else BasilDark).toArgb()
     }
     PizzaDoughTheme(darkTheme = darkTheme) {
         CalculatorScreen(vm)
